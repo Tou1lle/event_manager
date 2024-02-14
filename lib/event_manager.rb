@@ -72,6 +72,27 @@ def most_frequent_hour
   end.keys.join(" and ")
 end
 
+def most_frequent_day
+  content = open_cvs()
+  reg_days = []
+
+  content.each do |row|
+    reg_date = row[:regdate]
+    reg_day = Time.strptime(reg_date, "%m/%d/%y %k:%M").strftime("%A")
+    reg_days.push(reg_day)
+  end
+
+  reg_hash = reg_days.reduce(Hash.new(0)) do | result, day |
+    result[day] += 1
+    result
+  end
+
+  max_frequency = reg_hash.values.max
+  reg_hash.select do | day, frequency|
+    frequency == max_frequency
+  end.keys.join(" ")
+end
+
 puts "Event Manager Initialized!"
 
 contents = CSV.open(
@@ -122,3 +143,7 @@ end
 most_frequent_hour = most_frequent_hour()
 print "Most frequent hour: "
 puts most_frequent_hour
+
+most_frequent_day = most_frequent_day()
+print "Most frequent day: "
+puts most_frequent_day

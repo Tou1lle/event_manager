@@ -31,6 +31,17 @@ def save_thank_you_letter(id, form_letter)
   end
 end
 
+def clean_phone_number(phone_number)
+  phone_number = phone_number.scan(/\d+/).join("")
+  invalid_number = "Invalid number"
+
+  unless phone_number.length == 10
+    return (phone_number.length == 11 && phone_number[0] == "1") ? phone_number.slice(1, 10) : invalid_number
+  end
+
+  phone_number
+end
+
 puts "Event Manager Initialized!"
 
 contents = CSV.open(
@@ -45,10 +56,21 @@ erb_template = ERB.new(template_letter)
 contents.each do |row|
   id = row[0]
   name = row[:first_name]
-  zipcode = clean_zipcode(row[:zipcode])
-  legislators = legislators_by_zipcode(zipcode)
+  #zipcode = clean_zipcode(row[:zipcode])
+  #legislators = legislators_by_zipcode(zipcode)
+  phone_number = row[:homephone]
 
-  form_letter = erb_template.result(binding)
+  # map the string to contain only numbers
+  # check if length is 10
+  # check if length is 11
+  # check if starts if 1
+  clean_phone_number = clean_phone_number(phone_number)
 
-  save_thank_you_letter(id, form_letter)
+  puts clean_phone_number
+  puts phone_number
+  puts "--------------------------"
+
+  #form_letter = erb_template.result(binding)
+
+  #save_thank_you_letter(id, form_letter)
 end

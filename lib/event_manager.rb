@@ -1,6 +1,7 @@
 require "csv"
 require "google/apis/civicinfo_v2"
 require "erb"
+require "time"
 
 def clean_zipcode(zipcode)
   zipcode.to_s.rjust(5, "0")[0..4]
@@ -66,8 +67,22 @@ contents.each do |row|
   # check if starts if 1
   clean_phone_number = clean_phone_number(phone_number)
 
+  print "Clean phone number: "
   puts clean_phone_number
+  print "Bad phone number: "
   puts phone_number
+
+  # get the date and time from contents
+  reg_date = row[:regdate]
+  reg_hour = Time.strptime(reg_date, "%m/%d/%y %k:%M").strftime("%k")
+  reg_day = Time.strptime(reg_date, "%m/%d/%y %k:%M").strftime("%A")
+
+  print "Registration day: "
+  puts reg_day
+  print "Registration hour: "
+  puts reg_hour
+  print "Registration date: "
+  puts reg_date
   puts "--------------------------"
 
   #form_letter = erb_template.result(binding)

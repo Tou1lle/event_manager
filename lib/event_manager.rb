@@ -43,6 +43,35 @@ def clean_phone_number(phone_number)
   phone_number
 end
 
+def open_cvs
+  CSV.open(
+    "event_attendees.csv",
+    headers: true,
+    header_converters: :symbol
+  )
+end
+
+def most_frequent_hour
+  content = open_cvs()
+  reg_hours = []
+
+  content.each do |row|
+    reg_date = row[:regdate]
+    reg_hour = Time.strptime(reg_date, "%m/%d/%y %k:%M").strftime("%k")
+    reg_hours.push(reg_hour)
+  end
+
+  reg_hash = reg_hours.reduce(Hash.new(0)) do | result, hour |
+    result[hour] += 1
+    result
+  end
+
+  max_frequency = reg_hash.values.max
+  reg_hash.select do | hour, frequency|
+    frequency == max_frequency
+  end.keys.join(" and ")
+end
+
 puts "Event Manager Initialized!"
 
 contents = CSV.open(
@@ -89,3 +118,7 @@ contents.each do |row|
 
   #save_thank_you_letter(id, form_letter)
 end
+
+most_frequent_hour = most_frequent_hour()
+print "Most frequent hour: "
+puts most_frequent_hour
